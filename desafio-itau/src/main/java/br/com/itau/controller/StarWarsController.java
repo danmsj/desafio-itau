@@ -49,9 +49,9 @@ public class StarWarsController {
 		return this.starWarsService.findAllAcessos();
 
 	}
-	@ApiOperation(value="Consulta pelo ID do personagem, retornando o personagem e mais 3 sugestões relacionadas por planeta")
+	@ApiOperation(value="Consulta pelo ID do personagem, retornando o personagem e sugestão relacionada por planeta")
 	@GetMapping("/personagem/{id}")
-	public PersonagemVo findByIdPersonagem(@PathVariable Long id) {
+	public PersonagemVo findByIdPersonagem(@PathVariable Long id) throws Exception {
 		return this.starWarsService.findByIdPersonagem(id);
 
 	}
@@ -61,9 +61,9 @@ public class StarWarsController {
 		return this.starWarsService.findAllPersonagem(params);
 
 	}
-	@ApiOperation(value="Consulta pelo ID do planeta, retornando o planeta e mais 3 sugestões relacionadas por filme")
+	@ApiOperation(value="Consulta pelo ID do planeta, retornando o planeta e sugestão relacionada por filme")
 	@GetMapping("/planeta/{id}")
-	public PlanetaVo findByIdPlaneta(@PathVariable Long id) {
+	public PlanetaVo findByIdPlaneta(@PathVariable Long id) throws Exception {
 		return this.starWarsService.findByIdPlaneta(id);
 
 	}
@@ -72,9 +72,9 @@ public class StarWarsController {
 	public ResultadoPlanetaVo findAllPlaneta(@ModelAttribute ParamPlaneta params) {
 		return this.starWarsService.findAllPlaneta(params);
 	}
-	@ApiOperation(value="Consulta pelo ID do veículo, retornando o veículo e mais 3 sugestões relacionadas por filme")
+	@ApiOperation(value="Consulta pelo ID do veículo, retornando o veículo e sugestão relacionada por filme")
 	@GetMapping("/veiculo/{id}")
-	public VeiculoVo findByIdVeiculo(@PathVariable Long id) {
+	public VeiculoVo findByIdVeiculo(@PathVariable Long id) throws Exception {
 		return this.starWarsService.findByIdVeiculo(id);
 
 	}
@@ -84,9 +84,9 @@ public class StarWarsController {
 		return this.starWarsService.findAllVeiculo(params);
 
 	}
-	@ApiOperation(value="Consulta pelo ID da nave, retornando a naves e mais 3 sugestões relacionadas por piloto")
+	@ApiOperation(value="Consulta pelo ID da nave, retornando a nave e sugestão relacionada por piloto")
 	@GetMapping("/nave/{id}")
-	public NaveVo findByIdNave(@PathVariable Long id) {
+	public NaveVo findByIdNave(@PathVariable Long id) throws Exception {
 		return this.starWarsService.findByIdNave(id);
 
 	}
@@ -96,9 +96,9 @@ public class StarWarsController {
 		return this.starWarsService.findAllNave(params);
 
 	}
-	@ApiOperation(value="Consulta pelo ID da espécies, retornando a espécie e mais 3 sugestões realcionadas por personagem")
+	@ApiOperation(value="Consulta pelo ID da espécies, retornando a espécie e sugestão relacionada por personagem")
 	@GetMapping("/especie/{id}")
-	public EspecieVo findByIdEspecie(@PathVariable Long id) {
+	public EspecieVo findByIdEspecie(@PathVariable Long id) throws Exception {
 		return this.starWarsService.findByIdEspecie(id);
 
 	}
@@ -108,9 +108,9 @@ public class StarWarsController {
 		return this.starWarsService.findAllEspecie(params);
 
 	}
-	@ApiOperation(value="Consulta pelo ID do filme, retornando o filme e mais 3 sugestões relacionadas por personagem")
+	@ApiOperation(value="Consulta pelo ID do filme, retornando o filme e sugestão relacionada por personagem")
 	@GetMapping("/filme/{id}")
-	public FilmeVo findByIdFilme(@PathVariable Long id) {
+	public FilmeVo findByIdFilme(@PathVariable Long id) throws Exception {
 		return this.starWarsService.findByIdFilme(id);
 
 	}
