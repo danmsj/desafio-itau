@@ -27,5 +27,6 @@ public class PlanetaVo {
 	private String url;
 	private String created;
 	private String edited;
+	private List<String> planetaRelacionadoFilme;
 	
 }

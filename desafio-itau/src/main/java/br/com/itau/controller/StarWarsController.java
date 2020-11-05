@@ -49,7 +49,7 @@ public class StarWarsController {
 		return this.starWarsService.findAllAcessos();
 
 	}
-	@ApiOperation(value="Consulta pelo ID do personagem, retornando o personagem e mais 3 sugestões")
+	@ApiOperation(value="Consulta pelo ID do personagem, retornando o personagem e mais 3 sugestões relacionadas por planeta")
 	@GetMapping("/personagem/{id}")
 	public PersonagemVo findByIdPersonagem(@PathVariable Long id) {
 		return this.starWarsService.findByIdPersonagem(id);
@@ -61,7 +61,7 @@ public class StarWarsController {
 		return this.starWarsService.findAllPersonagem(params);
 
 	}
-	@ApiOperation(value="Consulta pelo ID do planeta, retornando o planeta e mais 3 sugestões")
+	@ApiOperation(value="Consulta pelo ID do planeta, retornando o planeta e mais 3 sugestões relacionadas por filme")
 	@GetMapping("/planeta/{id}")
 	public PlanetaVo findByIdPlaneta(@PathVariable Long id) {
 		return this.starWarsService.findByIdPlaneta(id);
@@ -72,7 +72,7 @@ public class StarWarsController {
 	public ResultadoPlanetaVo findAllPlaneta(@ModelAttribute ParamPlaneta params) {
 		return this.starWarsService.findAllPlaneta(params);
 	}
-	@ApiOperation(value="Consulta pelo ID do veículo, retornando o veículo e mais 3 sugestões")
+	@ApiOperation(value="Consulta pelo ID do veículo, retornando o veículo e mais 3 sugestões relacionadas por filme")
 	@GetMapping("/veiculo/{id}")
 	public VeiculoVo findByIdVeiculo(@PathVariable Long id) {
 		return this.starWarsService.findByIdVeiculo(id);
@@ -84,7 +84,7 @@ public class StarWarsController {
 		return this.starWarsService.findAllVeiculo(params);
 
 	}
-	@ApiOperation(value="Consulta pelo ID da nave, retornando a naves e mais 3 sugestões")
+	@ApiOperation(value="Consulta pelo ID da nave, retornando a naves e mais 3 sugestões relacionadas por piloto")
 	@GetMapping("/nave/{id}")
 	public NaveVo findByIdNave(@PathVariable Long id) {
 		return this.starWarsService.findByIdNave(id);
@@ -96,7 +96,7 @@ public class StarWarsController {
 		return this.starWarsService.findAllNave(params);
 
 	}
-	@ApiOperation(value="Consulta pelo ID da espécies, retornando a espécie e mais 3 sugestões")
+	@ApiOperation(value="Consulta pelo ID da espécies, retornando a espécie e mais 3 sugestões realcionadas por personagem")
 	@GetMapping("/especie/{id}")
 	public EspecieVo findByIdEspecie(@PathVariable Long id) {
 		return this.starWarsService.findByIdEspecie(id);
@@ -108,7 +108,7 @@ public class StarWarsController {
 		return this.starWarsService.findAllEspecie(params);
 
 	}
-	@ApiOperation(value="Consulta pelo ID do filme, retornando o filme e mais 3 sugestões")
+	@ApiOperation(value="Consulta pelo ID do filme, retornando o filme e mais 3 sugestões relacionadas por personagem")
 	@GetMapping("/filme/{id}")
 	public FilmeVo findByIdFilme(@PathVariable Long id) {
 		return this.starWarsService.findByIdFilme(id);

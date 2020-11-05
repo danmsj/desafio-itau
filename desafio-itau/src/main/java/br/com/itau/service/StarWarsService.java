@@ -2,7 +2,6 @@ package br.com.itau.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -52,10 +51,9 @@ public class StarWarsService {
 		planetaPersonagem = this.feignStarWars.findByIdPersonagem(id);
 		String[] planeta = planetaPersonagem.getHomeworld().split("/");
 		Long idPlaneta = Long.parseLong(planeta[planeta.length - 1]);
-		PlanetaVo planetaVo = findByIdPlaneta(idPlaneta);
+		PlanetaVo planetaVo = findByIdPlanetaRelacionados(idPlaneta);
 
 		String urlPersonagem = URL_PERSONAGEM;
-		setContadorAcesso(urlPersonagem + id);
 
 		List<String> url = new ArrayList<String>();
 		int contador = 0;
@@ -71,27 +69,71 @@ public class StarWarsService {
 			}
 
 		}
+		setContadorAcesso(URL_PERSONAGEM + id);
 
 		planetaPersonagem.setPersonagemRelacionadoPlaneta(url);
 
 		return planetaPersonagem;
 	}
 
+
 	public ResultadoPersonagemVo findAllPersonagem(ParamPersonagem params) {
-		setContadorAcesso(URL_PERSONAGEM);
+
 		return this.feignStarWars.findAllPersonagem(params.getName());
 	}
+	
+
+	
+	
 
 	public PlanetaVo findByIdPlaneta(Long id) {
-		setContadorAcesso(URL_PLANETA);
-		return this.feignStarWars.findByIdPlaneta(id);
+
+		PlanetaVo planetaFilme = new PlanetaVo();
+		planetaFilme = this.feignStarWars.findByIdPlaneta(id);
+
+		List<Long> guardaIdFilmes = new ArrayList<Long>();
+		for (String separaListaFilmes : planetaFilme.getFilms()) {
+			String filmes = separaListaFilmes;
+			String[] separaUrlFilmes = filmes.split("/");
+			Long idFilmesPlaneta = Long.parseLong(separaUrlFilmes[separaUrlFilmes.length - 1]);
+			guardaIdFilmes.add(idFilmesPlaneta);
+
+		}
+
+		for (Long filmeId : guardaIdFilmes) {
+			FilmeVo filme = findByIdFilmeRelacionados(filmeId);
+
+			String urlPlaneta = URL_PLANETA;
+
+			List<String> url = new ArrayList<String>();
+			int contador = 0;
+			for (String planetaRelacionados : filme.getPlanets()) {
+
+				if (contador < 3) {
+					String[] planeta = planetaRelacionados.split("/");
+					Long idPlaneta = Long.parseLong(planeta[planeta.length - 1]);
+
+					if (id.compareTo(idPlaneta) != 0) {
+						url.add(urlPlaneta + idPlaneta);
+						contador++;
+					}
+				}
+				planetaFilme.setPlanetaRelacionadoFilme(url);
+			}
+
+		}
+
+		setContadorAcesso(URL_PLANETA + id);
+		return planetaFilme;
 	}
 
 	public ResultadoPlanetaVo findAllPlaneta(ParamPlaneta params) {
-		setContadorAcesso(URL_PLANETA);
+
 		return this.feignStarWars.findAllPlaneta(params.getName());
 	}
+	
 
+	
 	public VeiculoVo findByIdVeiculo(Long id) {
 
 		VeiculoVo veiculoFilme = new VeiculoVo();
@@ -101,20 +143,20 @@ public class StarWarsService {
 		for (String separaListaFilmes : veiculoFilme.getFilms()) {
 			String filmes = separaListaFilmes;
 			String[] separaUrlFilmes = filmes.split("/");
-			Long IdFilmesVeiculo = Long.parseLong(separaUrlFilmes[separaUrlFilmes.length - 1]);
-			guardaIdFilmes.add(IdFilmesVeiculo);
-			System.out.println(guardaIdFilmes);
+			Long idFilmesVeiculo = Long.parseLong(separaUrlFilmes[separaUrlFilmes.length - 1]);
+			guardaIdFilmes.add(idFilmesVeiculo);
+
 		}
 
 		for (Long filmeId : guardaIdFilmes) {
-			FilmeVo filme = findByIdFilme(filmeId);
-			
+			FilmeVo filme = findByIdFilmeRelacionados(filmeId);
+
 			String urlVeiculo = URL_VEICULO;
-			setContadorAcesso(urlVeiculo + id);
 
 			List<String> url = new ArrayList<String>();
 			int contador = 0;
 			for (String veiculoRelacionados : filme.getVehicles()) {
+
 				if (contador < 3) {
 					String[] veiculo = veiculoRelacionados.split("/");
 					Long idVeiculo = Long.parseLong(veiculo[veiculo.length - 1]);
@@ -127,48 +169,168 @@ public class StarWarsService {
 				veiculoFilme.setVeiculoRelacionadoFilme(url);
 			}
 
-			
 		}
-		
 
+		setContadorAcesso(URL_VEICULO + id);
 		return veiculoFilme;
-		
+
 	}
 
 	public ResultadoVeiculoVo findAllVeiculo(ParamVeiculo params) {
-		setContadorAcesso(URL_VEICULO);
+
 		return this.feignStarWars.findAllVeiculo(params.getName());
 	}
 
 	public NaveVo findByIdNave(Long id) {
-		setContadorAcesso(URL_NAVE);
-		return this.feignStarWars.findByIdNave(id);
+
+		NaveVo navePiloto = new NaveVo();
+		navePiloto = this.feignStarWars.findByIdNave(id);
+
+		List<Long> guardaIdPiloto = new ArrayList<Long>();
+		for (String separaListaPilotos : navePiloto.getPilots()) {
+			String piloto = separaListaPilotos;
+			String[] separaUrlPiloto = piloto.split("/");
+			Long IdPilotoNave = Long.parseLong(separaUrlPiloto[separaUrlPiloto.length - 1]);
+			guardaIdPiloto.add(IdPilotoNave);
+
+		}
+
+		for (Long pilotoId : guardaIdPiloto) {
+			PersonagemVo piloto = findByIdPersonagemRelacionados(pilotoId);
+
+			String urlNave = URL_NAVE;
+
+			List<String> url = new ArrayList<String>();
+			int contador = 0;
+			for (String naveRelacionados : piloto.getStarships()) {
+
+				if (contador < 3) {
+					String[] nave = naveRelacionados.split("/");
+					Long idNave = Long.parseLong(nave[nave.length - 1]);
+
+					if (id.compareTo(idNave) != 0) {
+						url.add(urlNave + idNave);
+						contador++;
+					}
+				}
+				navePiloto.setNavesRelacionadasPilotos(url);
+			}
+
+		}
+
+		setContadorAcesso(URL_NAVE + id);
+		return navePiloto;
 	}
 
 	public ResultadoNaveVo findAllNave(ParamNave params) {
-		setContadorAcesso(URL_NAVE);
+
 		return this.feignStarWars.findAllNave(params.getName());
 	}
 
 	public EspecieVo findByIdEspecie(Long id) {
-		setContadorAcesso(URL_ESPECIE);
-		return this.feignStarWars.findByIdEspecie(id);
+
+		EspecieVo especiePersonagem = new EspecieVo();
+		especiePersonagem = this.feignStarWars.findByIdEspecie(id);
+
+		List<Long> guardaIdPersonagem = new ArrayList<Long>();
+		for (String separaListaPersonagem : especiePersonagem.getFilms()) {
+			String personagem = separaListaPersonagem;
+			String[] separaUrlPersonagem = personagem.split("/");
+			Long IdPersonagemEspecie = Long.parseLong(separaUrlPersonagem[separaUrlPersonagem.length - 1]);
+			guardaIdPersonagem.add(IdPersonagemEspecie);
+
+		}
+
+		for (Long personagemId : guardaIdPersonagem) {
+			PersonagemVo personagem = findByIdPersonagemRelacionados(personagemId);
+
+			String urlEspecie = URL_ESPECIE;
+
+			List<String> url = new ArrayList<String>();
+			int contador = 0;
+			for (String especieRelacionado : personagem.getSpecies()) {
+
+				if (contador < 3) {
+					String[] especie = especieRelacionado.split("/");
+					Long idEspecie = Long.parseLong(especie[especie.length - 1]);
+
+					if (id.compareTo(idEspecie) != 0) {
+						url.add(urlEspecie + idEspecie);
+						contador++;
+					}
+				}
+				especiePersonagem.setEspeciesRelacionadoPersonagem(url);
+			}
+
+		}
+
+		setContadorAcesso(URL_ESPECIE + id);
+		return especiePersonagem;
 	}
 
 	public ResultadoEspecieVo findAllEspecie(ParamEspecie params) {
-		setContadorAcesso(URL_ESPECIE);
+
 		return this.feignStarWars.findAllEspecie(params.getName());
 	}
 
 	public FilmeVo findByIdFilme(Long id) {
-		setContadorAcesso(URL_FILME);
-		return this.feignStarWars.findByIdFilme(id);
+
+		FilmeVo filmePersonagem = new FilmeVo();
+		filmePersonagem = this.feignStarWars.findByIdFilme(id);
+
+		List<Long> guardaIdPersonagem = new ArrayList<Long>();
+		for (String separaListaPersonagem : filmePersonagem.getCharacters()) {
+			String personagem = separaListaPersonagem;
+			String[] separaUrlPersonagem = personagem.split("/");
+			Long IdPersonagemFilme = Long.parseLong(separaUrlPersonagem[separaUrlPersonagem.length - 1]);
+			guardaIdPersonagem.add(IdPersonagemFilme);
+
+		}
+
+		for (Long personagemId : guardaIdPersonagem) {
+			PersonagemVo personagem = findByIdPersonagemRelacionados(personagemId);
+
+			String urlFilme = URL_FILME;
+
+			List<String> url = new ArrayList<String>();
+			int contador = 0;
+			for (String filmeRelacionado : personagem.getFilms()) {
+
+				if (contador < 3) {
+					String[] filme = filmeRelacionado.split("/");
+					Long idFilme = Long.parseLong(filme[filme.length - 1]);
+
+					if (id.compareTo(idFilme) != 0) {
+						url.add(urlFilme + idFilme);
+						contador++;
+					}
+				}
+				filmePersonagem.setFilmeRelacionadoPersonagem(url);
+			}
+
+		}
+
+		setContadorAcesso(URL_FILME + id);
+		return filmePersonagem;
 	}
 
 	public ResultadoFilmeVo findAllFilme(ParamFilme params) {
-		setContadorAcesso(URL_FILME);
+
 		return this.feignStarWars.findAllFilme(params.getName());
 	}
+	
+	
+	
+	private  PersonagemVo findByIdPersonagemRelacionados(Long idPersonagem) {
+		return this.feignStarWars.findByIdPersonagemRelacionados(idPersonagem);
+	}
+	private  FilmeVo findByIdFilmeRelacionados(Long idFilme) {
+		return this.feignStarWars.findByIdFilmeRelacionados(idFilme);
+	}
+	private  PlanetaVo findByIdPlanetaRelacionados(Long idPlaneta) {
+		return this.feignStarWars.findByIdPlanetaRelacionados(idPlaneta);
+	}
+
 
 	public void setContadorAcesso(String path) {
 		Contador contador = null;
@@ -182,15 +344,15 @@ public class StarWarsService {
 	}
 
 	public List<AcessosVo> findAllAcessos() {
-		List<AcessosVo> acessos = new ArrayList<AcessosVo>();
+		List<AcessosVo> acessosOrdenados = new ArrayList<AcessosVo>();
 		List<Contador> contador = this.contadorRepository.findAll(Sort.by(Direction.DESC, "contador"));
 		for (Contador c : contador) {
 			AcessosVo acesso = new AcessosVo();
 			acesso.setUrl(c.getUrl());
 			acesso.setContador(c.getContador());
-			acessos.add(acesso);
+			acessosOrdenados.add(acesso);
 		}
-		return acessos;
+		return acessosOrdenados;
 	}
 
 }

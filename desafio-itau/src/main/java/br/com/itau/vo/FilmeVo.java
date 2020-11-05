@@ -18,15 +18,16 @@ public class FilmeVo {
 	private int episodeId;
 	private String openingCrawl;
 	private String director;
-	private String producer; 
+	private String producer;
 	private Date realeaseDate;
 	private List<String> species;
 	private List<String> starships;
 	private List<String> vehicles;
 	private List<String> characters;
 	private List<String> planets;
-	private String url; 
-	private String created; 
-	private String edited; 
+	private String url;
+	private String created;
+	private String edited;
+	private List<String> filmeRelacionadoPersonagem;
 
 }
