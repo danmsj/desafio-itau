@@ -2,6 +2,7 @@ package br.com.itau.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -33,29 +34,29 @@ import br.com.itau.vo.VeiculoVo;
 
 @Service
 public class StarWarsService {
-	public static final String URL_PERSONAGEM = "http://localhost:8080/starwars/personagem";
-	public static final String URL_PLANETA = "http://localhost:8080/starwars/planeta";
-	public static final String URL_FILME = "http://localhost:8080/starwars/filme";
-	public static final String URL_NAVE = "http://localhost:8080/starwars/nave";
-	public static final String URL_VEICULO = "http://localhost:8080/starwars/veiculo";
-	public static final String URL_ESPECIE = "http://localhost:8080/starwars/especie";
-	
+	public static final String URL_PERSONAGEM = "http://localhost:8080/starwars/personagem/";
+	public static final String URL_PLANETA = "http://localhost:8080/starwars/planeta/";
+	public static final String URL_FILME = "http://localhost:8080/starwars/filme/";
+	public static final String URL_NAVE = "http://localhost:8080/starwars/nave/";
+	public static final String URL_VEICULO = "http://localhost:8080/starwars/veiculo/";
+	public static final String URL_ESPECIE = "http://localhost:8080/starwars/especie/";
+
 	@Autowired
 	private FeignStarWars feignStarWars;
 	@Autowired
 	private ContadorRepository contadorRepository;
 
 	public PersonagemVo findByIdPersonagem(Long id) {
+
 		PersonagemVo planetaPersonagem = new PersonagemVo();
-		
 		planetaPersonagem = this.feignStarWars.findByIdPersonagem(id);
 		String[] planeta = planetaPersonagem.getHomeworld().split("/");
 		Long idPlaneta = Long.parseLong(planeta[planeta.length - 1]);
 		PlanetaVo planetaVo = findByIdPlaneta(idPlaneta);
 
 		String urlPersonagem = URL_PERSONAGEM;
-		setContadorAcesso(urlPersonagem+id);
-		
+		setContadorAcesso(urlPersonagem + id);
+
 		List<String> url = new ArrayList<String>();
 		int contador = 0;
 		for (String personagemRelacionados : planetaVo.getResidents()) {
@@ -64,7 +65,7 @@ public class StarWarsService {
 				Long idPersonagem = Long.parseLong(personagem[personagem.length - 1]);
 
 				if (id.compareTo(idPersonagem) != 0) {
-					url.add(urlPersonagem + "/" + idPersonagem);
+					url.add(urlPersonagem + idPersonagem);
 					contador++;
 				}
 			}
@@ -90,17 +91,55 @@ public class StarWarsService {
 		setContadorAcesso(URL_PLANETA);
 		return this.feignStarWars.findAllPlaneta(params.getName());
 	}
-	
+
 	public VeiculoVo findByIdVeiculo(Long id) {
-		setContadorAcesso(URL_VEICULO);
-		return this.feignStarWars.findByIdVeiculo(id);
+
+		VeiculoVo veiculoFilme = new VeiculoVo();
+		veiculoFilme = this.feignStarWars.findByIdVeiculo(id);
+
+		List<Long> guardaIdFilmes = new ArrayList<Long>();
+		for (String separaListaFilmes : veiculoFilme.getFilms()) {
+			String filmes = separaListaFilmes;
+			String[] separaUrlFilmes = filmes.split("/");
+			Long IdFilmesVeiculo = Long.parseLong(separaUrlFilmes[separaUrlFilmes.length - 1]);
+			guardaIdFilmes.add(IdFilmesVeiculo);
+			System.out.println(guardaIdFilmes);
+		}
+
+		for (Long filmeId : guardaIdFilmes) {
+			FilmeVo filme = findByIdFilme(filmeId);
+			
+			String urlVeiculo = URL_VEICULO;
+			setContadorAcesso(urlVeiculo + id);
+
+			List<String> url = new ArrayList<String>();
+			int contador = 0;
+			for (String veiculoRelacionados : filme.getVehicles()) {
+				if (contador < 3) {
+					String[] veiculo = veiculoRelacionados.split("/");
+					Long idVeiculo = Long.parseLong(veiculo[veiculo.length - 1]);
+
+					if (id.compareTo(idVeiculo) != 0) {
+						url.add(urlVeiculo + idVeiculo);
+						contador++;
+					}
+				}
+				veiculoFilme.setVeiculoRelacionadoFilme(url);
+			}
+
+			
+		}
+		
+
+		return veiculoFilme;
+		
 	}
 
 	public ResultadoVeiculoVo findAllVeiculo(ParamVeiculo params) {
 		setContadorAcesso(URL_VEICULO);
 		return this.feignStarWars.findAllVeiculo(params.getName());
 	}
-	
+
 	public NaveVo findByIdNave(Long id) {
 		setContadorAcesso(URL_NAVE);
 		return this.feignStarWars.findByIdNave(id);
@@ -110,7 +149,7 @@ public class StarWarsService {
 		setContadorAcesso(URL_NAVE);
 		return this.feignStarWars.findAllNave(params.getName());
 	}
-	
+
 	public EspecieVo findByIdEspecie(Long id) {
 		setContadorAcesso(URL_ESPECIE);
 		return this.feignStarWars.findByIdEspecie(id);
@@ -130,6 +169,7 @@ public class StarWarsService {
 		setContadorAcesso(URL_FILME);
 		return this.feignStarWars.findAllFilme(params.getName());
 	}
+
 	public void setContadorAcesso(String path) {
 		Contador contador = null;
 		contador = this.contadorRepository.findFirstByUrlOrderByIdDesc(path).orElse(null);
@@ -143,8 +183,8 @@ public class StarWarsService {
 
 	public List<AcessosVo> findAllAcessos() {
 		List<AcessosVo> acessos = new ArrayList<AcessosVo>();
-		List<Contador> contador = this.contadorRepository.findAll(Sort.by(Direction.DESC,"contador"));
-		for(Contador c:contador) {
+		List<Contador> contador = this.contadorRepository.findAll(Sort.by(Direction.DESC, "contador"));
+		for (Contador c : contador) {
 			AcessosVo acesso = new AcessosVo();
 			acesso.setUrl(c.getUrl());
 			acesso.setContador(c.getContador());

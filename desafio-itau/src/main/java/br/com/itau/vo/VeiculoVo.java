@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class VeiculoVo {
 
 	private String name;
@@ -29,5 +28,6 @@ public class VeiculoVo {
 	private List<String> pilots; 
 	private String url; 
 	private String created; 
-	private String edited; 
+	private String edited;
+	private List<String> veiculoRelacionadoFilme;
 }
